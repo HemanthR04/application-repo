@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily:{
+        Satoshi:"Satoshi",
+        Montserrat:"Montserrat"
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
