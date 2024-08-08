@@ -3,7 +3,8 @@ import {
     LayoutGrid,
     SettingsIcon,
     Shield,
-    AppWindow
+    AppWindow,
+    Cable
   } from "lucide-react";
   
   type Submenu = {
@@ -55,6 +56,13 @@ import {
             label: "Application Details",
             active: pathname.includes("/applicationdetails"),
             icon: AppWindow,
+            submenus: []
+          },
+          {
+            href: "/applicationflows",
+            label: "Application Flows",
+            active: pathname.includes("/applicationdflows"),
+            icon: Cable,
             submenus: []
           },
           {

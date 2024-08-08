@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 import { Toaster } from "@/components/ui/toaster"
 import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
-import { ThemeProvider } from "next-themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -30,9 +29,9 @@ export default function RootLayout({
       > 
         <div className="w-full">
         <Toaster />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        
           <AdminPanelLayout>{children}</AdminPanelLayout>
-          </ThemeProvider></div>
+          </div>
       </body>
     </html>
   );
