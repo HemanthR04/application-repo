@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -29,23 +29,37 @@ export default function SignupPage() {
   })
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const validateForm = () => {
+    const errors: string[] = [];
+    if (!/\S+@\S+\.\S+/.test(user.email)) {
+      errors.push("Email is invalid.");
+    }
+    if (user.password.length < 6) {
+      errors.push("Password must be at least 6 characters long.");
+    }
+    if (user.firstname.length === 0 || user.lastname.length === 0) {
+      errors.push("First name and Last name are required.");
+    }
+    setErrorMessages(errors);
+    return errors.length === 0;
+  };
 
   const onSignup = async () => {
+    if (!validateForm()) return;
     try {
       setLoading(true);
       const response = await axios.post("/api/users/signup", user);
-      
       toast.success("Signup success");
       router.push("/login");
-
     } catch (error: any) {
-      
-
+      setErrorMessages([error.response?.data?.message || "Signup failed."]);
       toast.error(error.message);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (user.email.length > 0 && user.password.length > 0 && user.firstname.length && user.lastname.length > 0) {
@@ -61,10 +75,17 @@ export default function SignupPage() {
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <h1>{loading ? "Processing" : ""}</h1>
       <hr />
+      {errorMessages.length > 0 && (
+        <div className="text-red-500">
+          {errorMessages.map((msg, index) => (
+            <p key={index}>{msg}</p>
+          ))}
+        </div>
+      )}
       <div className="container">
           <div className="max-w-2xl text-center  my-4 mx-auto flex flex-col items-center justify-center">
             <div>
-              <Image src={'/assets/logo.png'} alt="logo" width={120} height={100}></Image>
+            
             </div>
 
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -121,7 +142,7 @@ export default function SignupPage() {
                 onChange={(e) => setUser({ ...user, password: e.target.value })} />
             </div>
            
-            <Button type="submit" onClick={onSignup} variant="expandIcon" Icon={ArrowRightIcon} iconPlacement="right">
+            <Button type="submit" onClick={onSignup} variant="expandIcon" Icon={ArrowRightIcon} iconPlacement="right" disabled={buttonDisabled || loading}>
             Create an account
             </Button>
 

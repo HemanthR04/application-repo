@@ -58,13 +58,7 @@ import {
             icon: AppWindow,
             submenus: []
           },
-          {
-            href: "/applicationflows",
-            label: "Application Flows",
-            active: pathname.includes("/applicationdflows"),
-            icon: Cable,
-            submenus: []
-          },
+          
           {
             href: "",
             label: "Manage",

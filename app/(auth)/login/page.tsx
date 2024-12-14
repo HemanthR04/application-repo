@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
@@ -26,16 +26,36 @@ export default function LoginPage() {
   });
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
   const onLogin = async () => {
+    if (!validateEmail(user.email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+    if (user.password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+    setErrorMessage(""); // Clear previous error messages
+
     try {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
-
       toast.success("Login success");
+      if (rememberMe) {
+        // Logic to remember user (e.g., set a cookie)
+      }
       router.push("/");
     } catch (error: any) {
-      toast.error("Login Failed , Check your Credentials");
+      setErrorMessage(error.response?.data?.message || "Login Failed, Check your Credentials");
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -79,6 +99,7 @@ export default function LoginPage() {
       </div>
       <h1>{loading ? "Processing" : ""}</h1>
       <hr />
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <Card className="mx-auto max-w-sm ">
         <CardHeader>
           <CardTitle className="text-xl">Login</CardTitle>
@@ -115,12 +136,22 @@ export default function LoginPage() {
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
               />
             </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <Label htmlFor="rememberMe" className="ml-2">Remember Me</Label>
+            </div>
             <Button
               type="submit"
               onClick={onLogin}
               variant="expandIcon"
               Icon={ArrowRightIcon}
               iconPlacement="right"
+              disabled={buttonDisabled || loading}
             >
               Login
             </Button>

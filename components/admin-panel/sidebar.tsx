@@ -42,7 +42,7 @@ export function Sidebar() {
               )}
             >
               <div>
-              <Image src={'/assets/logo.png'} alt="logo" width={120} height={100}></Image>
+             APP VAULT
             </div>
             </h1>
           </Link>
